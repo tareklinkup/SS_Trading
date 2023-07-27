@@ -124,9 +124,13 @@ class Sales extends CI_Controller {
                 $saleDetails = array(
                     'SaleMaster_IDNo' => $salesId,
                     'Product_IDNo' => $cartProduct->productId,
+                    'brand_name' => $cartProduct->brand_name ?? '',
+                    'parts_no' => $cartProduct->parts_no ?? '', 
                     'SaleDetails_TotalQuantity' => $cartProduct->quantity,
                     'Purchase_Rate' => $cartProduct->purchaseRate,
                     'SaleDetails_Rate' => $cartProduct->salesRate,
+                    'acctualSalesRate' => $cartProduct->acctualSalesRate,
+                    'sales_percent' => $cartProduct->sales_percent,
                     'SaleDetails_Tax' => $cartProduct->vat,
                     'SaleDetails_TotalAmount' => $cartProduct->total,
                     'SaleDetails_ic_rate' => $cartProduct->ic_rate,
@@ -312,12 +316,13 @@ class Sales extends CI_Controller {
                     sd.*,
                     p.Product_Name,
                     p.ic_rate,
+                    p.parts_no,
                     pc.ProductCategory_Name,
                     u.Unit_Name
                 from tbl_saledetails sd
-                join tbl_product p on p.Product_SlNo = sd.Product_IDNo
-                join tbl_productcategory pc on pc.ProductCategory_SlNo = p.ProductCategory_ID
-                join tbl_unit u on u.Unit_SlNo = p.Unit_ID
+                left join tbl_product p on p.Product_SlNo = sd.Product_IDNo
+                left join tbl_productcategory pc on pc.ProductCategory_SlNo = p.ProductCategory_ID
+                left join tbl_unit u on u.Unit_SlNo = p.Unit_ID
                 where sd.SaleMaster_IDNo = ?
             ", $data->salesId)->result();
     
@@ -403,9 +408,13 @@ class Sales extends CI_Controller {
                 $saleDetails = array(
                     'SaleMaster_IDNo' => $salesId,
                     'Product_IDNo' => $cartProduct->productId,
+                    'brand_name' => $cartProduct->brand_name ?? '',
+                    'parts_no' => $cartProduct->parts_no ?? '', 
                     'SaleDetails_TotalQuantity' => $cartProduct->quantity,
                     'Purchase_Rate' => $cartProduct->purchaseRate,
                     'SaleDetails_Rate' => $cartProduct->salesRate,
+                    'acctualSalesRate' => $cartProduct->acctualSalesRate,
+                    'sales_percent' => $cartProduct->sales_percent,
                     'SaleDetails_Tax' => $cartProduct->vat,
                     'SaleDetails_TotalAmount' => $cartProduct->total,
                     'Status' => 'a',

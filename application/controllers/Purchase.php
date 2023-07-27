@@ -44,14 +44,15 @@ class Purchase extends CI_Controller
                     pd.*,
                     p.Product_Name,
                     p.Product_Code,
+                    p.parts_no,
                     p.ProductCategory_ID,
                     p.Product_SellingPrice,
                     pc.ProductCategory_Name,
                     u.Unit_Name
                 from tbl_purchasedetails pd 
-                join tbl_product p on p.Product_SlNo = pd.Product_IDNo
-                join tbl_productcategory pc on pc.ProductCategory_SlNo = p.ProductCategory_ID
-                join tbl_unit u on u.Unit_SlNo = p.Unit_ID
+                left join tbl_product p on p.Product_SlNo = pd.Product_IDNo
+                left join tbl_productcategory pc on pc.ProductCategory_SlNo = p.ProductCategory_ID
+                left join tbl_unit u on u.Unit_SlNo = p.Unit_ID
                 where pd.PurchaseMaster_IDNo = '$data->purchaseId'
             ")->result();
         }
@@ -430,12 +431,18 @@ class Purchase extends CI_Controller
             $this->db->insert('tbl_purchasemaster', $purchase);
             $purchaseId = $this->db->insert_id();
 
+            echo json_encode($data->cartProducts);
+            return;
+
             foreach($data->cartProducts as $product){
                 $purchaseDetails = array(
                     'PurchaseMaster_IDNo' => $purchaseId,
                     'Product_IDNo' => $product->productId,
+                    'brand_name'  => $product->brand_name,
+                    'parts_no'  => $product->parts_no,
                     'PurchaseDetails_TotalQuantity' => $product->quantity,
                     'PurchaseDetails_Rate' => $product->purchaseRate,
+                    'actualPurchaseDetails_Rate' => $product->purchaseRate,
                     'PurchaseDetails_TotalAmount' => $product->total,
                     'Status' => 'a',
                     'AddBy' => $this->session->userdata("FullName"),
@@ -530,6 +537,8 @@ class Purchase extends CI_Controller
                 $purchaseDetails = array(
                     'PurchaseMaster_IDNo' => $purchaseId,
                     'Product_IDNo' => $product->productId,
+                   'brand_name'  => $product->brand_name,
+                    'parts_no'  => $product->parts_no,
                     'PurchaseDetails_TotalQuantity' => $product->quantity,
                     'PurchaseDetails_Rate' => $product->purchaseRate,
                     'PurchaseDetails_TotalAmount' => $product->total,
@@ -1443,45 +1452,45 @@ class Purchase extends CI_Controller
     function select_supplier()
     {
         ?>
-        <div class="form-group">
-            <label class="col-sm-2 control-label no-padding-right" for="Supplierid"> Select Supplier </label>
-            <div class="col-sm-3">
-                <select name="Supplierid" id="Supplierid" data-placeholder="Choose a Supplier..." class="chosen-select">
-                    <option value=""></option>
-                    <?php
+<div class="form-group">
+    <label class="col-sm-2 control-label no-padding-right" for="Supplierid"> Select Supplier </label>
+    <div class="col-sm-3">
+        <select name="Supplierid" id="Supplierid" data-placeholder="Choose a Supplier..." class="chosen-select">
+            <option value=""></option>
+            <?php
                     $sql = $this->db->query("SELECT * FROM tbl_supplier where Supplier_brinchid='" . $this->brunch . "' order by Supplier_Name desc");
                     $row = $sql->result();
                     foreach ($row as $row) { ?>
-                        <option value="<?php echo $row->Supplier_SlNo; ?>"><?php echo $row->Supplier_Name; ?>
-                            (<?php echo $row->Supplier_Code; ?>)
-                        </option>
-                    <?php } ?>
-                </select>
-            </div>
-        </div>
-        <?php
+            <option value="<?php echo $row->Supplier_SlNo; ?>"><?php echo $row->Supplier_Name; ?>
+                (<?php echo $row->Supplier_Code; ?>)
+            </option>
+            <?php } ?>
+        </select>
+    </div>
+</div>
+<?php
     }
 
     function select_product()
     {
         ?>
-        <div class="form-group">
-            <label class="col-sm-2 control-label no-padding-right" for="Productid"> Select Product </label>
-            <div class="col-sm-3">
-                <select name="Productid" id="Productid" data-placeholder="Choose a Product..." class="chosen-select">
-                    <option value=""></option>
-                    <?php
+<div class="form-group">
+    <label class="col-sm-2 control-label no-padding-right" for="Productid"> Select Product </label>
+    <div class="col-sm-3">
+        <select name="Productid" id="Productid" data-placeholder="Choose a Product..." class="chosen-select">
+            <option value=""></option>
+            <?php
                     $sql = $this->db->query("SELECT * FROM tbl_product order by Product_Name desc");
                     $row = $sql->result();
                     foreach ($row as $row) { ?>
-                        <option value="<?php echo $row->Product_SlNo; ?>"><?php echo $row->Product_Name; ?>
-                            (<?php echo $row->Product_Code; ?>)
-                        </option>
-                    <?php } ?>
-                </select>
-            </div>
-        </div>
-        <?php
+            <option value="<?php echo $row->Product_SlNo; ?>"><?php echo $row->Product_Name; ?>
+                (<?php echo $row->Product_Code; ?>)
+            </option>
+            <?php } ?>
+        </select>
+    </div>
+</div>
+<?php
     }
 
     public function getPurchaseReturns() {
