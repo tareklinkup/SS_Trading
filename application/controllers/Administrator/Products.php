@@ -678,7 +678,7 @@ class Products extends CI_Controller {
                 pd.PurchaseDetails_SlNo as id,
                 pm.PurchaseMaster_OrderDate as date,
                 concat('Purchase - ', pm.PurchaseMaster_InvoiceNo, ' - ', s.Supplier_Name) as description,
-                pd.PurchaseDetails_Rate as rate,
+                pd.actualPurchaseRate as rate,
                 pd.PurchaseDetails_TotalQuantity as in_quantity,
                 0 as out_quantity
             from tbl_purchasedetails pd
@@ -694,7 +694,7 @@ class Products extends CI_Controller {
                 sd.SaleDetails_SlNo as id,
                 sm.SaleMaster_SaleDate as date,
                 concat('Sale - ', sm.SaleMaster_InvoiceNo, ' - ', c.Customer_Name) as description,
-                sd.SaleDetails_Rate as rate,
+                sd.acctualSalesRate as rate,
                 0 as in_quantity,
                 sd.SaleDetails_TotalQuantity as out_quantity
             from tbl_saledetails sd

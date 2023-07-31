@@ -162,7 +162,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label no-padding-right"> Parts No </label>
                                     <div class="col-sm-7">
-                                        <input type="text" v-model="selectedProduct.parts_name" readonly
+                                        <input type="text" v-model="selectedProduct.parts_no" readonly
                                             class="form-control">
                                     </div>
                                 </div>
@@ -184,9 +184,9 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right"> Pur. Percent </label>
+                                    <label class="col-sm-4 control-label no-padding-right"> Purchase % </label>
                                     <div class="col-sm-3">
-                                        <input type="text" placeholder="%" class="form-control"
+                                        <input type="text" placeholder="%" id="purchase_percent" class="form-control"
                                             v-model="selectedProduct.purchase_percent" @input="calculatePurchasePrice"
                                             id="sale_in_p" />
                                     </div>
@@ -194,7 +194,7 @@
                                     <label class="col-sm-2 control-label no-padding-right">Price </label>
                                     <div class="col-sm-3">
                                         <input type="text" placeholder="Price" class="form-control"
-                                            v-model="selectedProduct.purchasePrice" @input="calculatePurchaseIn" />
+                                            v-model="selectedProduct.purchasePrice" @input="calculatePurchasePrice" />
                                     </div>
                                 </div>
 
@@ -247,6 +247,7 @@
                             <th style="width:20%;color:#000;">Product Name</th>
                             <th style="width:13%;color:#000;">Category</th>
                             <th style="width:13%;color:#000;">Brand</th>
+                            <th style="width:13%;color:#000;">Parts No</th>
                             <th style="width:8%;color:#000;">Purchase Rate</th>
                             <th style="width:8%;color:#000;">Actual Purchase Rate</th>
                             <th style="width:5%;color:#000;">Quantity</th>
@@ -260,6 +261,7 @@
                             <td>{{ product.name }}</td>
                             <td>{{ product.categoryName }}</td>
                             <td>{{ product.brand_name }}</td>
+                            <td>{{ product.parts_no }}</td>
                             <td>{{ product.purchaseRate }}</td>
                             <td>{{ product.actualPurchaseRate }}</td>
                             <td>{{ product.quantity }}</td>
@@ -616,7 +618,7 @@ new Vue({
             let product = {
                 productId: this.selectedProduct.Product_SlNo,
                 brand_name: this.selectedProduct.brand_name,
-                parts_name: this.selectedProduct.parts_name ?? '',
+                parts_no: this.selectedProduct.parts_no ?? '',
                 name: this.selectedProduct.Product_Name,
                 categoryId: this.selectedProduct.ProductCategory_ID,
                 categoryName: this.selectedProduct.ProductCategory_Name,
@@ -664,15 +666,37 @@ new Vue({
         },
 
         calculatePurchasePrice() {
-            let amount = (this.selectedProduct.Product_Actual_Purchase_Rate * this.selectedProduct
-                    .purchase_percent /
-                    100)
-                .toFixed(2);
-            this.selectedProduct.purchasePrice = (parseFloat(this.selectedProduct
-                    .Product_Actual_Purchase_Rate) +
-                parseFloat(amount)).toFixed(2);
-            this.selectedProduct.total = (this.selectedProduct.purchasePrice * this.selectedProduct.quantity)
-                .toFixed(2);
+
+            if (event.target.id == 'purchase_percent') {
+
+                let amount = (this.selectedProduct.Product_Actual_Purchase_Rate * this.selectedProduct
+                        .purchase_percent /
+                        100)
+                    .toFixed(2);
+                this.selectedProduct.purchasePrice = (parseFloat(this.selectedProduct
+                        .Product_Actual_Purchase_Rate) +
+                    parseFloat(amount)).toFixed(2);
+                this.selectedProduct.total = (this.selectedProduct.purchasePrice * this.selectedProduct
+                        .quantity)
+                    .toFixed(2);
+            } else {
+
+                let percentiseTaka = (this.selectedProduct
+                    .purchasePrice - this.selectedProduct.Product_Purchase_Rate).toFixed(2);
+
+                let purchase_percent = parseFloat(percentiseTaka).toFixed(2) / this
+                    .selectedProduct
+                    .Product_Purchase_Rate *
+                    100;
+
+                this.selectedProduct.purchase_percent = parseFloat(purchase_percent).toFixed(2);
+
+                console.log(this.selectedProduct.purchase_percent);
+
+                this.selectedProduct.total = (this.selectedProduct.purchasePrice * this.selectedProduct
+                        .quantity)
+                    .toFixed(2);
+            }
         },
 
         calculatePurchaseIn() {
@@ -824,6 +848,7 @@ new Vue({
                         productId: product.Product_IDNo,
                         name: product.Product_Name,
                         brand_id: product.brand_SiNo,
+                        parts_no: product.parts_no,
                         brand_name: product.brand_name,
                         categoryId: product.ProductCategory_ID,
                         categoryName: product.ProductCategory_Name,

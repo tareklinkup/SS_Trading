@@ -142,8 +142,7 @@
                 <div class="form-group clearfix">
                     <label class="control-label col-md-4">Purchase Rate:</label>
                     <div class="col-md-7">
-                        <input type="text" class="form-control" v-model="product.Product_Purchase_Rate" required
-                            @input="purchaseTotal">
+                        <input type="text" class="form-control" v-model="product.Product_Purchase_Rate" required>
                     </div>
                 </div>
 
@@ -151,12 +150,12 @@
                     <label class="control-label col-md-4">Actual Purchase Rate:</label>
                     <div class="col-md-3">
                         <input type="number" class="form-control" id="purchasePercent"
-                            v-model="product.purchase_percent" required @input="purchaseTotal" min="1.0" step="0.01">
+                            v-model="product.purchase_percent" required @input="purchaseTotal" min="0" step="0.01">
                     </div>
                     <span class="col-md-1">%</span>
                     <div class="col-md-3">
                         <input type="number" id="actual_purchase_price" class="form-control"
-                            v-model="product.Product_Actual_Purchase_Rate" required min="1.0" step="0.01"
+                            v-model="product.Product_Actual_Purchase_Rate" required min="0" step="0.01"
                             @input="purchaseTotal">
                     </div>
                 </div>
@@ -165,7 +164,7 @@
                     <label class="control-label col-md-4">Sales Rate:</label>
                     <div class="col-md-7">
                         <input type="text" class="form-control" v-model="product.Product_SellingPrice" required
-                            @input="salesTotal" min="1.0" step="0.01">
+                            min="1.0" step="0.01">
                     </div>
                 </div>
 
@@ -176,21 +175,20 @@
                             required @input="salesTotal" min="1.0" step="0.01"> -->
 
                         <input type="number" class="form-control" id="salesPercent" v-model="product.sales_percent"
-                            required @input="salesTotal" min="1.0" step="0.01">
+                            required @input="salesTotal" min="0" step="0.01">
                     </div>
                     <span class="col-md-1">%</span>
                     <div class="col-md-3">
-                        <input type="number" id="actual_sales_price" class="form-control"
-                            v-model="product.Product_Actual_Sales_Rate" required min="1.0" step="0.01"
-                            @input="salesTotal">
+                        <input type="number" class="form-control" v-model="product.Product_Actual_Sales_Rate" required
+                            min="0" step="0.01" @input="salesTotal">
                     </div>
                 </div>
 
                 <div class="form-group clearfix">
                     <label class="control-label col-md-4">Wholesale Rate:</label>
                     <div class="col-md-7">
-                        <input type="text" class="form-control" v-model="product.Product_WholesaleRate" required
-                            @input="wholesalesTotal" min="1.0" step="0.01">
+                        <input type="text" class="form-control" v-model="product.Product_WholesaleRate" required min="0"
+                            step="0.01">
                     </div>
                 </div>
 
@@ -199,13 +197,12 @@
                     <label class="control-label col-md-4">Actual Wholesale Rate:</label>
                     <div class="col-md-3">
                         <input type="number" class="form-control" id="wholeSalePercent"
-                            v-model="product.wholesales_percent" required @input="wholesalesTotal" min="1.0"
-                            step="0.01">
+                            v-model="product.wholesales_percent" required @input="wholesalesTotal" min="0" step="0.01">
                     </div>
                     <span class="col-md-1">%</span>
                     <div class="col-md-3">
                         <input type="number" class="form-control" v-model="product.Product_Actual_WholeSales_Rate"
-                            required min="1.0" step="0.01" @input="wholesalesTotal">
+                            required min="0" step="0.01" @input="wholesalesTotal">
                     </div>
                 </div>
 
@@ -467,7 +464,7 @@ new Vue({
 
         async salesTotal() {
 
-            if (event.target == 'salesPercent') {
+            if (event.target.id == 'salesPercent') {
                 let percent = this.product.Product_SellingPrice * this.product.sales_percent /
                     100;
                 let price = this.product.Product_SellingPrice;
@@ -484,7 +481,7 @@ new Vue({
 
         async wholesalesTotal() {
 
-            if (event.target == 'wholeSalePercent') {
+            if (event.target.id == 'wholeSalePercent') {
 
                 let percent = this.product.Product_WholesaleRate * this.product.wholesales_percent /
                     100;

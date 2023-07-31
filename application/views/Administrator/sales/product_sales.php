@@ -268,7 +268,7 @@
                                     style="border:none;font-size:12px;width:100%;text-align: center;"><br><br>
                             </div>
                             <input type="password" ref="productPurchaseRate"
-                                v-model="selectedProduct.Product_Purchase_Rate"
+                                v-model="selectedProduct.Product_Actual_Purchase_Rate"
                                 v-on:mousedown="toggleProductPurchaseRate" v-on:mouseup="toggleProductPurchaseRate"
                                 readonly title="Purchase rate (click & hold)"
                                 style="font-size:12px;width:100%;text-align: center;">
@@ -289,12 +289,11 @@
                             <th style="width:12%;color:#000;">Category</th>
                             <th style="width:25%;color:#000;">Product Name</th>
                             <th style="width:25%;color:#000;">Brand Name</th>
-                            <th style="width:7%;color:#000;">Qty</th>
                             <th style="width:8%;color:#000;">Rate</th>
-                            <th style="width:8%;color:#000;">Acctual Rate</th>
-
                             <th style="width:8%;color:#000;">Sale In</th>
                             <th style="width:12%;color:#000;">Sale In Taka</th>
+                            <th style="width:8%;color:#000;">Acctual Rate</th>
+                            <th style="width:7%;color:#000;">Qty</th>
                             <th style="width:15%;color:#000;">Total Amount</th>
                             <th style="width:12%;color:#000;">Action</th>
                         </tr>
@@ -305,11 +304,11 @@
                             <td>{{ product.categoryName }}</td>
                             <td>{{ product.name }}</td>
                             <td>{{ product.brand_name }}</td>
-                            <td>{{ product.quantity }}</td>
                             <td>{{ product.salesRate }}</td>
-                            <td> {{product.acctualSalesRate}}</td>
                             <td>{{ product.sales_percent }} %</td>
                             <td>{{ product.saleInTaka }}</td>
+                            <td> {{product.acctualSalesRate}}</td>
+                            <td>{{ product.quantity }}</td>
                             <td>{{ product.total }}</td>
                             <td><a href="" v-on:click.prevent="removeFromCart(sl)"><i class="fa fa-trash"></i></a></td>
                         </tr>
@@ -739,7 +738,7 @@ new Vue({
             this.$refs.productPurchaseRate.type = this.$refs.productPurchaseRate.type == 'text' ? 'password' :
                 'text';
         },
-        addToCart() {
+        async addToCart() {
             //console.log(this.selectedProduct);
             let product = {
                 productId: this.selectedProduct.Product_SlNo,
@@ -759,6 +758,8 @@ new Vue({
                     .Product_SellingPrice * +this.selectedProduct.quantity)).toFixed(2),
             }
 
+
+
             if (product.productId == '') {
                 document.querySelector('#product input[role="combobox"]').focus();
                 return;
@@ -773,7 +774,8 @@ new Vue({
                 alert('Enter quantity');
                 return;
             }
-            if (this.selectedProduct.sales_percent == undefined || this.selectedProduct.sales_percent == '') {
+            if (this.selectedProduct.sales_percent == undefined || this.selectedProduct.sales_percent ==
+                '') {
                 document.querySelector('#sale_in_p').focus();
                 return;
             }
@@ -791,21 +793,19 @@ new Vue({
             if (this.reOrederLevel > this.productStock) {
                 alert('Please purchase product currently product stock is very low');
             }
-            this.counter += 1;
+
             document.querySelector('#ad2cart').focus();
-            if (this.counter == 2) {
-                let cartInd = this.cart.findIndex(p => p.productId == product.productId);
-                if (cartInd > -1) {
-                    this.cart.splice(cartInd, 1);
-                }
-
-                this.cart.unshift(product);
-                this.clearProduct();
-                this.calculateTotal();
-                document.querySelector('#ad2cart').focus();
-
-                this.counter = 0;
+            let cartInd = this.cart.findIndex(p => p.productId == product.productId);
+            if (cartInd > -1) {
+                this.cart.splice(cartInd, 1);
             }
+
+            this.cart.push(product);
+            this.clearProduct();
+            this.calculateTotal();
+            document.querySelector('#ad2cart').focus();
+
+
 
             // let cartInd = this.cart.findIndex(p => p.productId == product.productId);
             // if (cartInd > -1) {
